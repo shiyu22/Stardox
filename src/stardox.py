@@ -3,6 +3,7 @@ import sys
 import colors
 import Logo
 import argparse
+import time
 
 # Getting the name of the repository.
 def getting_header(soup_text):
