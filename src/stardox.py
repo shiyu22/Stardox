@@ -147,7 +147,7 @@ if __name__ == '__main__':
         pos=0
         colors.process("Doxing started ...\n",verbose)
         print(colors.red+"{0}".format("-")*75,colors.green,end="\n\n")
-        print("len(data):"len(data.username_list))
+        print("len(data):", len(data.username_list))
         while(count<=len(data.username_list)):                                         # Fetching details of stargazers one by one.
             starer_url="https://github.com/"+data.username_list[pos]
             user_html=requests.get(starer_url).text
