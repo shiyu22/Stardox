@@ -129,7 +129,7 @@ if __name__ == '__main__':
         colors.process("Fetching stargazers list",verbose)
         while (stargazer_link!=None):                                   # Getting list of all the stargazers
             # time.sleep(5)
-            # print("stargazer_link_start:", stargazer_link)
+            print("stargazer_link_start:", stargazer_link)
             stargazer_html=requests.get(stargazer_link).text
             soup2=BeautifulSoup(stargazer_html,"lxml")
             a_next = soup2.findAll("a")
@@ -144,7 +144,7 @@ if __name__ == '__main__':
                     break
                 else:
                     stargazer_link = None
-            # print("end-----------------:", stargazer_link)
+            print("end-----------------:", stargazer_link)
             follow_names=soup2.findAll("h3",{"class":"follow-list-name"})
             for name in follow_names:
                 a_tag=name.findAll("a")
