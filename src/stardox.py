@@ -132,12 +132,14 @@ if __name__ == '__main__':
             soup2=BeautifulSoup(stargazer_html,"lxml")
             a_next = soup2.findAll("a")
             for a in a_next:
+                if stargazer_link == 'https://github.com/milvus-io/milvus/stargazers?after=Y3Vyc29yOnYyOpO0MjAxOS0xMS0wNVQwNjoxMzo0MVoAzguFbj4%3D':
+                    print(a.get_text())
                 if a.get_text() == "Next":
                     stargazer_link = a.get('href')
                     break
                 else:
                     stargazer_link = None
-            print("stargazer_link_end----------------:", stargazer_link)
+            print("end-----------------:", stargazer_link)
             follow_names=soup2.findAll("h3",{"class":"follow-list-name"})
             for name in follow_names:
                 a_tag=name.findAll("a")
