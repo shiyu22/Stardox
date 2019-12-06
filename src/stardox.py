@@ -128,12 +128,12 @@ if __name__ == '__main__':
         stargazer_link=repository_link+"/stargazers"
         colors.process("Fetching stargazers list",verbose)
         while (stargazer_link!=None):                                   # Getting list of all the stargazers
+            time.sleep(5)
             print("stargazer_link_start:", stargazer_link)
             stargazer_html=requests.get(stargazer_link).text
             soup2=BeautifulSoup(stargazer_html,"lxml")
             a_next = soup2.findAll("a")
             for a in a_next:
-                time.sleep(5)
                 # if stargazer_link == 'https://github.com/milvus-io/milvus/stargazers?after=Y3Vyc29yOnYyOpO0MjAxOS0xMS0wNVQwNjoxMzo0MVoAzguFbj4%3D':
                 #     print(a.get_text())
                 if a.get_text() == "Next":
