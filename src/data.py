@@ -19,5 +19,11 @@ email_list=[]
 #For Storing Total number of following of stargazers
 following_list=[]
 
+#For company of stargazers
+company_list=[]
+
+#For location of stargazers
+location_list=[]
+
 #For Storing the Repository name
 header=""

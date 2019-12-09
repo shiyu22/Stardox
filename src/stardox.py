@@ -52,14 +52,15 @@ def get_latest_commit(repo_name,username):
                     stop=patch_data.index(">")
                     email = patch_data[start+1:stop]
                 except ValueError:
-                    return "Not enough information."
+                    return "None"
                 break
     if email != "":
         return email
     else:
-        return "Not enough information."
+        return "None"
 
 if __name__ == '__main__':
+    print("Please delete the csv file first.")
     try:
         Logo.header()         # For Displaying Logo
 
@@ -128,23 +129,20 @@ if __name__ == '__main__':
         stargazer_link=repository_link+"/stargazers"
         colors.process("Fetching stargazers list",verbose)
         while (stargazer_link!=None):                                   # Getting list of all the stargazers
-            # time.sleep(5)
-            print("stargazer_link_start:", stargazer_link)
             stargazer_html=requests.get(stargazer_link).text
             soup2=BeautifulSoup(stargazer_html,"lxml")
             a_next = soup2.findAll("a")
-            for a in a_next:
-                # if stargazer_link == 'https://github.com/milvus-io/milvus/stargazers?after=Y3Vyc29yOnYyOpO0MjAxOS0xMS0wNVQwNjoxMzo0MVoAzguFbj4%3D':
-                #     print(a.get_text())
-                if a.get_text() == 'Contact Support':
+
+            if a_next[0].get_text() == 'Contact Support':
                     time.sleep(5)
-                    break
+                    continue
+
+            for a in a_next:
                 if a.get_text() == "Next":
                     stargazer_link = a.get('href')
                     break
                 else:
                     stargazer_link = None
-            print("end-----------------:", stargazer_link)
             follow_names=soup2.findAll("h3",{"class":"follow-list-name"})
             for name in follow_names:
                 a_tag=name.findAll("a")
@@ -154,14 +152,15 @@ if __name__ == '__main__':
         count=1
         pos=0
         colors.process("Doxing started ...\n",verbose)
+        print("len data:", len(data.username_list))
         print(colors.red+"{0}".format("-")*75,colors.green,end="\n\n")
-        print("len(data):", len(data.username_list))
         while(count<=len(data.username_list)):                                         # Fetching details of stargazers one by one.
             starer_url="https://github.com/"+data.username_list[pos]
             user_html=requests.get(starer_url).text
             soup3=BeautifulSoup(user_html,"lxml")
             repo_data = requests.get("https://github.com/{}?tab=repositories&type=source".format(data.username_list[pos])).text
             repo_soup = BeautifulSoup(repo_data,"lxml")
+
             a_tags = repo_soup.findAll("a")
             repositories_list = []
             for a_tag in a_tags:
@@ -171,9 +170,23 @@ if __name__ == '__main__':
                 email = get_latest_commit(repositories_list[0],data.username_list[pos])         # Getting email of the stargazer
                 data.email_list.append(str(email))
             else:
-                data.email_list.append("Not enough information.")
+                data.email_list.append("None")
             if(user_html!=None):
                 items=soup3.findAll("a",{"class":"UnderlineNav-item"})
+                try:
+                    company = soup3.findAll("li",{"itemprop":"worksFor"})
+                    tag_company = company[0].findAll("span")
+                    data.company_list.append(tag_company[0].get_text())
+                except:
+                    data.company_list.append("None")
+
+                try:
+                    location = soup3.findAll("li",{"itemprop":"homeLocation"})
+                    tag_location = location[0].findAll("span")
+                    data.location_list.append(tag_location[0].get_text())
+                except:
+                    data.location_list.append("None")
+
                 for item in items[1:]:
                     if item.get("href").endswith("repositories")==True:                         # Getting total repositories of the stargazer
                         a_tag=item.findAll("span")
@@ -193,12 +206,17 @@ if __name__ == '__main__':
                         data.following_list.append(following_count)
                 try:
                     import structer
-                    structer.plotdata(len(data.username_list),pos,count)                                      # Plotting the tree structer of the fetched details
+                    structer.save_list(len(data.username_list),pos,count)
+                    # structer.plotdata(len(data.username_list),pos,count)                                      # Plotting the tree structer of the fetched details
                 except ImportError:
                     colors.error("Error importing structer module.")
                     sys.exit(1)
             count+=1
             pos+=1
+        print("Getting data finished, it will be save.")
+        # import structer
+        # structer.save(len(data.username_list))
+
         print("\n",colors.green+"{0}".format("-")*75,colors.green,end="\n\n")
     except KeyboardInterrupt:
         print("\n\nYou're Great..!\nThanks for using :)")
